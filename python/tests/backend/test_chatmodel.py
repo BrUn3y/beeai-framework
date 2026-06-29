@@ -195,6 +195,11 @@ def test_chat_model_from(monkeypatch: pytest.MonkeyPatch) -> None:
     amazon_bedrock_chat_model = ChatModel.from_name("amazon_bedrock:meta.llama3-8b-instruct-v1:0")
     assert isinstance(amazon_bedrock_chat_model, AmazonBedrockChatModel)
 
+    # Regression: the default must not be another provider's id
+    # (was "llama-3.1-8b-instant", a Groq id that does not exist in Bedrock)
+    amazon_bedrock_default_chat_model = ChatModel.from_name("amazon_bedrock")
+    assert amazon_bedrock_default_chat_model.model_id == "meta.llama3-8b-instruct-v1:0"
+
     monkeypatch.setenv("AZURE_API_KEY", "secret")
     monkeypatch.setenv("AZURE_API_BASE", "base")
     monkeypatch.setenv("AZURE_API_VERSION", "version")
