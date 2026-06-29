@@ -42,7 +42,10 @@ class WikipediaTool(Tool[WikipediaToolInput, ToolRunOptions, WikipediaToolOutput
 
     def __init__(self, options: dict[str, Any] | None = None, *, language: str = "en") -> None:
         super().__init__(options)
-        self.client = wikipediaapi.Wikipedia(user_agent="beeai-framework https://github.com/i-am-bee/beeai-framework")
+        self.client = wikipediaapi.Wikipedia(
+            user_agent="beeai-framework https://github.com/i-am-bee/beeai-framework",
+            language=language,
+        )
         self._language = language
 
     def _create_emitter(self) -> Emitter:
@@ -71,9 +74,6 @@ class WikipediaTool(Tool[WikipediaToolInput, ToolRunOptions, WikipediaToolOutput
 
         if not page_py.exists():
             return WikipediaToolOutput([])
-
-        if self._language in page_py.langlinks:
-            page_py = page_py.langlinks[self._language]
 
         description_output = page_py.text if input.full_text else page_py.summary
 
